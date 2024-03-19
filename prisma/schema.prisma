@@ -1,0 +1,194 @@
+generator client {
+    provider = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id                  Int         @id @default(autoincrement())
+    username            String      @unique
+    email               String      @unique
+    document            String      @unique
+
+    password            String
+    name                String
+
+    birth               DateTime?
+    rg                  String?
+    phone               String?
+    cep                 String?
+    address             String?
+    city                String?
+    district            String?
+    number              String?
+    image               String      @default("")
+    uf                  String?
+
+    adm                 Boolean     @default(false)
+    sold                Int         @default(0)
+    bought              Int         @default(0)
+    rating              Float       @default(5)
+    ratings             Int         @default(0)
+    date                DateTime    @default(now())
+
+    crops               Crop[]
+    mediatedCrops       MediatedCrop[]
+    chats               Chat[]
+    messages            Message[]
+    
+    categories          Category[]
+    businessCategories  BusinessCategory[]
+
+    business            Business?
+    agent               Agent?
+    shipping            Shipping?
+    producer            Producer?
+}
+
+model Producer {
+    id          Int         @id @default(autoincrement())
+    name        String
+    document    String
+    phone       String
+    email       String
+    image       String?     @db.Text
+
+    date        DateTime    @default(now())
+    active      Boolean     @default(false)
+    rating      Float       @default(5)
+    ratings     Int         @default(0)
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @unique
+}
+
+model Shipping {
+    id          Int         @id @default(autoincrement())
+    name        String
+    document    String
+    phone       String
+    email       String
+    image       String?     @db.Text
+
+    date        DateTime    @default(now())
+    active      Boolean     @default(false)
+    rating      Float       @default(5)
+    ratings     Int         @default(0)
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @unique
+}
+
+model Agent {
+    id          Int         @id @default(autoincrement())
+    name        String
+    document    String
+    phone       String
+    email       String
+    image       String?     @db.Text
+
+    date        DateTime    @default(now())
+    active      Boolean     @default(false)
+    rating      Float       @default(5)
+    ratings     Int         @default(0)
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @unique
+}
+
+model Business {
+    id          Int         @id @default(autoincrement())
+    name        String
+    document    String
+    phone       String
+    email       String
+    image       String?     @db.Text
+
+    date        DateTime    @default(now())
+    active      Boolean     @default(false)
+    rating      Float       @default(5)
+    ratings     Int         @default(0)
+
+    store       Boolean
+    service     Boolean
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @unique
+
+    categories  BusinessCategory[]
+}
+
+
+model Crop {
+    id          Int         @id @default(autoincrement())
+    name        String
+    description String      @db.Text
+    weight      Float
+    price       Float
+    image       String      @db.Text @default("")
+    gallery     String      @db.Text @default("")
+
+    producer    User        @relation(fields: [producerId], references: [id])
+    producerId  Int
+    mediated    MediatedCrop?
+
+    rating      Float       @default(5)   
+    ratings     Int         @default(0)
+    date        DateTime    @default(now())
+    sold        Int         @default(0)
+
+    categories  Category[]
+
+}
+
+model MediatedCrop {
+    id          Int         @id @default(autoincrement())
+    crop        Crop        @relation(fields: [cropId], references: [id])
+    cropId      Int         @unique
+
+    agent       User        @relation(fields: [agentId], references: [id])
+    agentId     Int
+
+}
+
+model Message {
+    id          Int         @id @default(autoincrement())
+    text        String      @db.Text
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int
+    chat        Chat        @relation(fields: [chatId], references: [id])
+    chatId      Int
+}
+
+model Chat {
+    id          Int         @id @default(autoincrement())
+    channel     String
+    messages    Message[]
+    users       User[]      
+}
+
+model Category {
+    id          Int         @id @default(autoincrement())
+    name        String
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @default(1)
+
+    crops       Crop[]
+}
+
+model BusinessCategory {
+    id          Int         @id @default(autoincrement())
+    name        String
+    active      Boolean     @default(false)
+
+    user        User        @relation(fields: [userId], references: [id])
+    userId      Int         @default(1)
+    
+    businesses  Business[]
+}
