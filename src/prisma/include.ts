@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
-// export const entity = Prisma.validator<Prisma.EntityInclude>()({
-//   addresses: true,
-//   judiciaryEntity: true,
-//   physicalEntity: true,
-// });
+export const crops = Prisma.validator<Prisma.CropInclude>()({
+  producer: true,
+  mediated: { include: { agent: true } },
+  categories: true,
+});

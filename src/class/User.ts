@@ -2,7 +2,6 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "./helpers";
-// import { User } from "./User";
 
 export type UserPrisma = Prisma.UserGetPayload<{}>;
 
@@ -24,20 +23,20 @@ export class User {
   image: string;
   uf: string | null;
   adm: boolean;
-  sold: number;
-  bought: number;
-  rating: number;
-  ratings: number;
-  date: Date;
-  crops: any[];
-  mediatedCrops: any[];
-  chats: any[];
-  messages: any[];
-  categories: any[];
-  businessCategories: any[];
-  business: any;
-  agent: any;
-  shipping: any;
+  // sold: number;
+  // bought: number;
+  // rating: number;
+  // ratings: number;
+  // date: Date;
+  // crops: any[];
+  // mediatedCrops: any[];
+  // chats: any[];
+  // messages: any[];
+  // categories: any[];
+  // businessCategories: any[];
+  // business: any;
+  // agent: any;
+  // shipping: any;
   producer: any;
 
   constructor(id: number) {
@@ -72,6 +71,28 @@ export class User {
     }
   }
 
+  static async handleLogin(
+    socket: Socket,
+    data: { login: string; password: string }
+  ) {
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: data.login },
+          { email: data.login },
+          { document: data.login },
+        ],
+        password: data.password,
+      },
+    });
+
+    if (user) {
+      socket.emit("login:success", user);
+    } else {
+      socket.emit("login:error");
+    }
+  }
+
   load(data: UserPrisma) {
     this.id = data.id;
     this.username = data.username;
@@ -90,11 +111,11 @@ export class User {
     this.image = data.image;
     this.uf = data.uf;
     this.adm = data.adm;
-    this.sold = data.sold;
-    this.bought = data.bought;
-    this.rating = data.rating;
-    this.ratings = data.ratings;
-    this.date = data.date;
+    // this.sold = data.sold;
+    // this.bought = data.bought;
+    // this.rating = data.rating;
+    // this.ratings = data.ratings;
+    // this.date = data.date;
     // this.crops = data.crops;
     // this.mediatedCrops = data.mediatedCrops;
     // this.chats = data.chats;

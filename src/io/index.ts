@@ -4,6 +4,7 @@ import { Server as HttpsServer } from "https";
 import { Socket } from "socket.io";
 
 import { User, UserForm } from "../../src/class/User";
+import { Crop } from "../../src/class/Crop";
 
 let io: SocketIoServer | null = null;
 
@@ -33,7 +34,23 @@ export const handleSocket = (socket: Socket) => {
 
   // USER OPRTATIONS
   socket.on("user:signup", (data: UserForm) => User.handleSignup(socket, data));
+  socket.on("user:login", (data) => {
+    User.handleLogin(socket, data);
+  });
 
   // PRODUCT OPERTATIONS
+
+  // CROP OPERATIONS
+  socket.on("crop:new", (data) => {
+    Crop.create(socket, data);
+  });
+
+  socket.on("crop:list", () => {
+    Crop.list(socket);
+  });
+
+  socket.on("crop:find", (id: number) => {
+    Crop.find(socket, id);
+  });
 };
 export default { initializeIoServer, getIoInstance, handleSocket };
