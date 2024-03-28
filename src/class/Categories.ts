@@ -3,7 +3,7 @@ import { prisma } from "../prisma";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "./helpers";
 
-export type CropPrisma = Prisma.CropGetPayload<{}>;
+export type CategoryPrisma = Prisma.CategoryGetPayload<{}>;
 
 export const include = {
   crops: {
@@ -62,13 +62,7 @@ export class Crop {
 
   static async list(socket: Socket) {
     const crops = await prisma.crop.findMany({ include: include.crops });
-    const categories = await prisma.category.findMany({
-      where: {
-        crops: {},
-      },
-    });
     socket.emit("crop:list", crops);
-    socket.emit("crop:category:list", categories);
   }
 
   static async find(socket: Socket, id: number) {
