@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../prisma";
 import { Socket } from "socket.io";
 import { WithoutFunctions } from "./helpers";
+import { Crop } from "./Crop";
 
 export type UserPrisma = Prisma.UserGetPayload<{}>;
 
@@ -88,6 +89,7 @@ export class User {
 
     if (user) {
       socket.emit("login:success", user);
+      Crop.list(socket);
     } else {
       socket.emit("login:error");
     }
